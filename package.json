@@ -41,7 +41,7 @@
         "LICENSE"
     ],
     "scripts": {
-        "build": "tsc -p tsconfig.build.json",
+        "build": "node ./node_modules/typescript/bin/tsc -p tsconfig.build.json",
         "build:runtime": "npm run build",
         "build:watch": "npm run build -- --watch",
         "changelog:generate": "git cliff --config node_modules/gitcliff-config-nick2bad4u/cliff.toml --github-repo Nick2bad4u/vitest-config-nick2bad4u --output CHANGELOG.md",
@@ -74,7 +74,7 @@
         "lint:style": "stylelint \"**/*.{css,scss}\" --allow-empty-input --config stylelint.config.mjs --ignore-pattern \"coverage/**\" --ignore-pattern \"reports/**\"",
         "lint:style:fix": "npm run lint:style -- --fix",
         "lint:tsdoc": "node -e \"JSON.parse(require('node:fs').readFileSync('tsdoc.json','utf8')); console.log('tsdoc.json ok')\"",
-        "lint:vitest-config": "node -e \"import(\\\"./dist/vitest-config.js\\\").then((module) => { if (typeof module.createVitestConfig !== \\\"function\\\") process.exit(1); })\"",
+        "lint:vitest-config": "node -e \"import(\\\"./dist/vitest-config.js\\\").then((module) => { for (const name of [\\\"createBrowserVitestConfig\\\", \\\"createDomVitestConfig\\\", \\\"createVitestConfig\\\"]) if (typeof module[name] !== \\\"function\\\") process.exit(1); })\"",
         "lint:yaml": "eslint --cache --cache-strategy content --cache-location .cache/.eslintcache \"**/*.{yml,yaml}\"",
         "lint:yaml:fix": "npm run lint:yaml -- --fix",
         "lint:yamllint": "yamllint -c .yamllint .",
@@ -86,28 +86,36 @@
         "pretest": "npm run build",
         "test": "vitest run",
         "test:coverage": "npm run coverage",
-        "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.eslint.json --noEmit && tsc -p tsconfig.js.json --noEmit && tsc -p tsconfig.vitest-typecheck.json --noEmit",
+        "typecheck": "npm run typecheck:typescript6 && npm run typecheck:native",
         "typecheck:all": "npm run typecheck",
+        "typecheck:native": "node ./node_modules/@typescript/native/bin/tsc -p tsconfig.json --noEmit && node ./node_modules/@typescript/native/bin/tsc -p tsconfig.eslint.json --noEmit && node ./node_modules/@typescript/native/bin/tsc -p tsconfig.js.json --noEmit && node ./node_modules/@typescript/native/bin/tsc -p tsconfig.vitest-typecheck.json --noEmit",
+        "typecheck:typescript6": "node ./node_modules/typescript/bin/tsc -p tsconfig.json --noEmit && node ./node_modules/typescript/bin/tsc -p tsconfig.eslint.json --noEmit && node ./node_modules/typescript/bin/tsc -p tsconfig.js.json --noEmit && node ./node_modules/typescript/bin/tsc -p tsconfig.vitest-typecheck.json --noEmit",
         "types:update": "npx typesync",
         "update-actions": "actions-up --yes --style sha",
         "update-all": "npm run update-actions && npm run update-deps",
         "update-deps": "npx ncu -i --install never && npm update --force && npm install --force && npm run sync:node-version-files",
         "verify": "npm run release:verify"
     },
+    "overrides": {
+        "esbuild": "0.28.1"
+    },
     "dependencies": {
-        "ts-extras": "^1.2.0"
+        "ts-extras": "^1.2.0",
+        "type-fest": "^5.8.0"
     },
     "devDependencies": {
         "@arethetypeswrong/cli": "^0.18.5",
         "@microsoft/tsdoc-config": "^0.18.1",
         "@types/node": "^26.1.1",
+        "@typescript/native": "npm:typescript@^7.0.2",
         "@vitest/coverage-v8": "^4.1.10",
         "actions-up": "^1.16.0",
         "cross-env": "^10.1.0",
         "eslint": "^10.7.0",
-        "eslint-config-nick2bad4u": "^4.0.0",
+        "eslint-config-nick2bad4u": "^7.0.0",
+        "eslint-import-resolver-typescript": "^4.4.5",
         "git-cliff": "^2.13.1",
-        "gitcliff-config-nick2bad4u": "^1.3.0",
+        "gitcliff-config-nick2bad4u": "^1.4.0",
         "gitleaks-config-nick2bad4u": "^1.0.4",
         "jscpd": "^5.0.12",
         "jscpd-config-nick2bad4u": "^1.1.0",

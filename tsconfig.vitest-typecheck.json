@@ -17,6 +17,6 @@
         "index.d.ts",
         "test/**/*.d.ts",
         "test/**/*.ts",
-        "vite.config.ts"
+        "vitest.config.ts"
     ]
 }
