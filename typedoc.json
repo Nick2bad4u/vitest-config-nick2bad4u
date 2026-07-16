@@ -1,0 +1,10 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "entryPoints": [
+        "src/vitest-config.ts"
+    ],
+    "extends": [
+        "typedoc-config-nick2bad4u"
+    ],
+    "out": "docs/api"
+}
